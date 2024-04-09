@@ -364,8 +364,6 @@ class Collection(artist.Artist, cm.ScalarMappable):
         if self._hatch:
             gc.set_hatch(self._hatch)
             gc.set_hatch_color(self._hatch_color)
-            print(self._hatch_linewidth)
-            print(self.get_hatch_linewidth())
             mhatch._set_hatch_linewidth(gc, self.get_hatch_linewidth())
 
         if self.get_sketch_params() is not None:
