@@ -344,7 +344,7 @@ class RendererPS(_backend_pdf_ps.RendererPDFPSBase):
                 self.fontname = fontname
                 self.fontsize = fontsize
 
-    def create_hatch(self, gc, hatch):
+    def create_hatch(self, hatch, gc=None):
         sidelen = 72
         if hatch in self._hatches:
             return self._hatches[hatch]
@@ -773,7 +773,7 @@ grestore
                 write("grestore\n")
 
         if hatch:
-            hatch_name = self.create_hatch(gc, hatch)
+            hatch_name = self.create_hatch(hatch, gc)
             write("gsave\n")
             write(_nums_to_str(*gc.get_hatch_color()[:3]))
             write(f" {hatch_name} setpattern fill grestore\n")
