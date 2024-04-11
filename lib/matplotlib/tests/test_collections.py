@@ -1344,17 +1344,19 @@ def test_hatch_linewidth(fig_test, fig_ref):
     ax_ref = fig_ref.add_subplot()
 
     lw = 2.0
-    patches = [mpl.patches.Rectangle((0.5, 0.5), 0.3, 0.3),
-               mpl.patches.Circle((0.3, 0.3), 0.2),]
-    ref = mpl.collections.PatchCollection(patches, hatch="x", edgecolor="black")
-    ref.set_linewidth(2)
+
+    polygons = [
+        [(0.1, 0.1), (0.1, 0.4), (0.4, 0.4), (0.4, 0.1)],
+        [(0.6, 0.6), (0.6, 0.9), (0.9, 0.9), (0.9, 0.6)]
+    ]
+    ref = PolyCollection(polygons, hatch="x")
+    ref.set_hatch_linewidth(lw)
 
     with mpl.rc_context({"hatch.linewidth": lw}):
-        test = mpl.collections.PatchCollection(patches, hatch="x", edgecolor="black")
-        test.set_linewidth(2)
+        test = PolyCollection(polygons, hatch="x")
+        test.set_hatch_linewidth(lw)
 
-    # Add the collection to the axes
     ax_ref.add_collection(ref)
     ax_test.add_collection(test)
 
-    assert (test.get_linewidth() == lw) and (ref.get_linewidth() == lw)
+    assert (test.get_hatch_linewidth() == lw) and (ref.get_hatch_linewidth() == lw)
