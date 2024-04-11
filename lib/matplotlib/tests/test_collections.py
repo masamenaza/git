@@ -1338,22 +1338,23 @@ def test_striped_lines(fig_test, fig_ref, gapcolor):
         ax_ref.axvline(x, 0, 1, linestyle=ls, gapcolor=gcol, alpha=0.5)
 
 
-@check_figures_equal(extensions=['png', 'pdf', 'svg', 'eps'])
+@check_figures_equal(extensions=["png", "pdf", "svg", "eps"])
 def test_hatch_linewidth(fig_test, fig_ref):
     ax_test = fig_test.add_subplot()
     ax_ref = fig_ref.add_subplot()
 
     lw = 2.0
-
-    ref = mcollections.CircleCollection(sizes=[1, 2, 3, 4, 5], hatch='x')
+    patches = [mpl.patches.Rectangle((0.5, 0.5), 0.3, 0.3),
+               mpl.patches.Circle((0.3, 0.3), 0.2),]
+    ref = mpl.collections.PatchCollection(patches, hatch="x", edgecolor="black")
     ref.set_linewidth(2)
 
-    with mpl.rc_context({'hatch.linewidth': lw}):
-        test = mcollections.CircleCollection(sizes=[1, 2, 3, 4, 5], hatch='x')
+    with mpl.rc_context({"hatch.linewidth": lw}):
+        test = mpl.collections.PatchCollection(patches, hatch="x", edgecolor="black")
         test.set_linewidth(2)
 
     # Add the collection to the axes
     ax_ref.add_collection(ref)
     ax_test.add_collection(test)
 
-    assert ((test.get_linewidth() == lw) and (ref.get_linewidth() == lw))
+    assert (test.get_linewidth() == lw) and (ref.get_linewidth() == lw)
