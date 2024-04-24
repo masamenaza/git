@@ -1007,18 +1007,8 @@ class GraphicsContextBase:
         return self._hatch_linewidth
 
     def set_hatch_linewidth(self, hatch_linewidth):
-        """Set the hatch linewidth."""
+        """Set the hatch linewidth - not supported on all backends."""
         self._hatch_linewidth = hatch_linewidth
-
-    def _set_hatch_linewidth(self, hatch_linewidth):
-        if hasattr(self, "set_hatch_linewidth"):
-            self.set_hatch_linewidth(hatch_linewidth)
-        else:
-            _api.warn_deprecated(
-                "3.8", message="The current backend does not define "
-                "GraphicsContextRenderer.set_hatch_linewidth; support for such "
-                "backends is deprecated since %(since)s and will be removed "
-                "%(removal)s.")
 
     def get_sketch_params(self):
         """
