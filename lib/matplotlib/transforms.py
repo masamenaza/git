@@ -49,6 +49,7 @@ from numpy.linalg import inv
 from matplotlib import _api
 from matplotlib._path import (
     affine_transform, count_bboxes_overlapping_bbox, update_path_extents)
+from matplotlib import transforms
 from .path import Path
 
 DEBUG = False
@@ -2682,6 +2683,27 @@ class ScaledTranslation(Affine2DBase):
             self._mtx[:2, 2] = self._scale_trans.transform(self._t)
             self._invalid = 0
             self._inverted = None
+        return self._mtx
+
+
+class ScaledRotation(Affine2DBase):
+    """
+    A transformation that applies offset and direction
+    based on *trans_shift*.
+    """
+    def __init__(self, theta, trans_shift):
+        super().__init__()
+        self._theta = theta
+        self._trans_shift = trans_shift
+        self._mtx = None
+
+    def get_matrix(self):
+        if self._invalid:
+            transformed_coords = self._trans_shift.transform([[self._theta, 0]])[0]
+            adjusted_theta = transformed_coords[0]
+            rotation = transforms.Affine2D().rotate(adjusted_theta)
+            self._mtx = IdentityTransform._mtx.copy()
+            self._mtx[:2, :2] = rotation.get_matrix()[:2, :2]
         return self._mtx
 
 
