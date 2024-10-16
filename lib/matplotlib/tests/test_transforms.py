@@ -9,9 +9,10 @@ from matplotlib import scale
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.transforms as mtransforms
-from matplotlib.transforms import Affine2D, Bbox, TransformedBbox
+from matplotlib.transforms import Affine2D, Bbox, TransformedBbox, ScaledRotation
 from matplotlib.path import Path
 from matplotlib.testing.decorators import image_comparison, check_figures_equal
+from unittest.mock import MagicMock
 
 
 class TestAffine2D:
@@ -1104,3 +1105,26 @@ def test_interval_contains_open():
     assert not mtransforms.interval_contains_open((0, 1), -1)
     assert not mtransforms.interval_contains_open((0, 1), 2)
     assert mtransforms.interval_contains_open((1, 0), 0.5)
+
+
+def test_initialization():
+    """Test that the ScaledRotation object is initialized correctly."""
+    theta = 1.0  # Arbitrary theta value for testing
+    trans_shift = MagicMock()  # Mock the trans_shift transformation
+    scaled_rot = ScaledRotation(theta, trans_shift)
+    assert scaled_rot._theta == theta
+    assert scaled_rot._trans_shift == trans_shift
+    assert scaled_rot._mtx is None
+
+
+def test_get_matrix_invalid():
+    """Test get_matrix when the matrix is invalid and needs recalculation."""
+    theta = 1.0
+    trans_shift = MagicMock(transform=MagicMock(return_value=[[theta, 0]]))
+    scaled_rot = ScaledRotation(theta, trans_shift)
+    scaled_rot._invalid = True
+    matrix = scaled_rot.get_matrix()
+    trans_shift.transform.assert_called_once_with([[theta, 0]])
+    assert matrix is not None
+    expected_rotation = Affine2D().rotate(theta).get_matrix()[:2, :2]
+    assert (matrix[:2, :2] == expected_rotation).all()
